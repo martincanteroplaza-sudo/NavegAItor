@@ -6,10 +6,16 @@
 
 import express from "express";
 import * as cheerio from "cheerio";
-import { setTimeout as sleep } from "node:timers/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Sirve la página de NavegAItor (carpeta "public") directamente en "/".
+app.use(express.static(path.join(__dirname, "public")));
 
 // --- Privacidad -------------------------------------------------
 // No usamos ningún middleware de "logging" de peticiones (nada de
@@ -27,7 +33,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get("/", (_req, res) => {
+app.get("/estado", (_req, res) => {
   res.json({ ok: true, service: "navegaitor-backend", mode: "solo-lectura-de-urls" });
 });
 
