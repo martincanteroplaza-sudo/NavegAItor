@@ -61,12 +61,12 @@ button{border:0;cursor:pointer;border-radius:999px;background:var(--g);color:#05
   </form>
   <section id="res" aria-live="polite"></section>
 </main>
-<footer><span>© 2026 CrAIthon</span><span><a href="https://claude.ai/artifact/KmSL3Bh9wqDZFfieyFb9qZ" target="_blank" rel="noopener noreferrer" style="color:var(--mut)">Ver código</a> · NavegAItor v0.1</span></footer>
+<footer><span>© 2026 CrAIthon</span><span>NavegAItor v0.1 · en desarrollo</span></footer>
 <script>
 const esc=s=>s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 // Pega aquí la URL de Render cuando el backend esté desplegado,
 // por ejemplo: "https://navegaitor-backend.onrender.com"
-const API_URL = ""; // vacío: la página y el servidor viven juntos
+const API_URL = "https://navegaitor.onrender.com";
 
 function normalizaEnlace(v){
   v=v.trim();
@@ -75,37 +75,20 @@ function normalizaEnlace(v){
   try{ return new URL(v).toString(); }catch(e){ return null; }
 }
 
-document.getElementById('f').addEventListener('submit',async e=>{
+document.getElementById('f').addEventListener('submit',e=>{
   e.preventDefault();
   const raw=document.getElementById('q').value;
   const url=normalizaEnlace(raw);
   const r=document.getElementById('res');
-  r.style.display='block';
 
   if(!url){
+    r.style.display='block';
     r.innerHTML='<div class="card err">Eso no parece un enlace válido. Prueba con algo como <b>https://ejemplo.com</b>.</div>';
     return;
   }
 
-  r.innerHTML='<div class="card"><span class="spin"></span>Leyendo la página…</div>';
-
-  try{
-    const resp=await fetch(API_URL+'/read?url='+encodeURIComponent(url));
-    const data=await resp.json();
-    if(!resp.ok||data.error){
-      r.innerHTML='<div class="card err">No se ha podido leer esa página'+(data&&data.error?': '+esc(data.error):'.')+'</div>';
-      return;
-    }
-    r.innerHTML=
-      '<div class="card">'
-      +'<h2>'+esc(data.titulo||url)+'</h2>'
-      +'<a class="src" href="'+esc(data.url||url)+'" target="_blank" rel="noopener noreferrer">'+esc(data.url||url)+'</a>'
-      +(data.descripcion?'<div class="desc">'+esc(data.descripcion)+'</div>':'')
-      +'<div class="texto">'+esc(data.texto||'(Sin texto legible en esta página.)')+'</div>'
-      +'</div>';
-  }catch(err){
-    r.innerHTML='<div class="card err">No se ha podido contactar con el servidor de lectura. Inténtalo de nuevo en un momento.</div>';
-  }
+  // Abre la web directamente, en esta misma pestaña (no una nueva).
+  window.location.href=url;
 });
 </script>
 </body>
